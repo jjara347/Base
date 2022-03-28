@@ -1,0 +1,8 @@
+Django==2.2.7
+django-simple-history==2.7.3
+et-xmlfile==1.0.1
+jdcal==1.4.1
+openpyxl==3.0.0
+pytz==2019.3
+six==1.13.0
+sqlparse==0.3.0

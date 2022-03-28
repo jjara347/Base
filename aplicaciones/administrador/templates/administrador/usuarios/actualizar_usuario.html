@@ -1,0 +1,142 @@
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="cmp-tb-hd bcs-hd">
+                <h2>Edición de Usuarios</h2>
+                <p>Formulario para edición de usuarios.</p>
+            </div>
+            <button type="button" class="close btn" data-dismiss="modal">
+                &times;
+            </button>
+        </div>
+
+        <div>
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="model-body">
+                        <div id="erroresEdicion"></div>
+                        <form id="form_edicion" method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="card-block">
+                                        <div id="errores"></div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Nombre de Usuario</label>
+                                            <div class="col-sm-10">
+                                                {{ form.username }}
+                                                <span class="messages popover-valid"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Nombres</label>
+                                            <div class="col-sm-10">
+                                                {{ form.nombres }}
+                                                <span class="messages popover-valid"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Apellidos</label>
+                                            <div class="col-sm-10">
+                                                {{ form.apellidos }}
+                                                <span class="messages popover-valid"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Correo Electrónico</label>
+                                            <div class="col-sm-10">
+                                                {{ form.email }}
+                                                <span class="messages popover-valid"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="text-center mg-t-30 row">
+                <div class=" col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <button type="button" class="btn btn-danger" onclick="cerrarModal();">
+                        Cancelar
+                    </button>
+                </div>
+                <div class=" col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <button id="botonRegistrar" type="button" class="btn btn-success" onclick="editarUsuario();">
+                        Editar
+                    </button>
+                </div>
+                <div class=" col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <button type="button" class="btn btn-primary" onclick="limpiarFormularioEdicion();">
+                        Limpiar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+  function cerrarModal(){
+    /* Cerrar Modal de Edición.
+
+    Cierra el modal de edición de un usuario.
+
+    */
+    $('#modalEdicion').modal('hide');
+  }
+
+  function limpiarFormularioEdicion(){
+    /* Limpia el formulario de edicion de un usuario.
+
+    Limpia cada uno de los campos del formulario de edición de un usuario.
+
+    */
+    $('#id_username').val("");
+    $('#id_apellidos').val("");
+    $('#id_nombres').val("");
+    $('#id_email').val("");
+  }
+
+  function editarUsuario(){
+    /* Petición AJAX de Edición de un usuario.
+
+    Petición AJAX que captura toda la información escrita en el formulario y la guarda en la
+    variable --data-- la cual es enviada como parámetro a la petición AJAX.
+
+    En caso la petición sea aceptada se actualiza la lista de usuarios registrados, se cierra el
+    modal y se visualiza la notificación correspondiente.
+
+    En caso la petición sea rechazada se listan los errores que se observaron.
+
+    */
+
+    $.ajax({
+        data: $("#form_edicion").serialize(),
+        url: '/usuarios/actualizar_usuario/'+usuario_temporal+'/',
+        type: $("#form_edicion").attr("method"),
+        dataType: "json",       
+        success: function(response){
+            listarUsuariosRegistrados();
+            cerrarModal();
+            //noti(response.mensaje);
+        },
+        error: function(response){
+            $('#erroresEdicion').html("");
+            let error = '';
+            for(let item in response.responseJSON.mensaje){
+                for(let i in response.responseJSON.mensaje[item]){
+                  console.log(response.responseJSON.mensaje[item]);
+                    error += '<div class="alert alert-danger"><strong>'+response.responseJSON.mensaje[item][i]+'</strong></div>';
+                }
+            }
+            $('#erroresEdicion').append(error);
+        }
+    });
+  }
+
+</script>
